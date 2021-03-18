@@ -15,7 +15,7 @@ export default function App() {
 
   React.useEffect(()=>{
       async function callAPI(){
-        var res = await axios.get('Data.json') //[CORS] API NOT ALLOW * ORIGINS https://wegivmerchantapp.firebaseapp.com/exam/bi-member-day-2020-04-01.json
+        var res = await axios.get('https://wegivmerchantapp.firebaseapp.com/exam/bi-member-day-2020-04-01.json') 
          setData(res.data.data.list)
          setSummary({Sum:res.data.data.summary,Total:res.data.data.total})
          setTier(res.data.data.summarytier)
