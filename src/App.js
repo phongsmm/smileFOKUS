@@ -1,27 +1,38 @@
-import {Table,Container,Row,Col,Badge} from 'react-bootstrap'
+import {Table,Container,Row,Col,Badge,Alert} from 'react-bootstrap'
 import _ from 'lodash'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react';
+var data = require('./Data/Data.json');
 
 export default function App() {
 
-  const [Data,setData] = React.useState([])
   const [Summary,setSummary] = React.useState({Sum:{},Total:0})
   const [Customer,setCustomer] = React.useState([])
   const [Tier,setTier] = React.useState([])
+  const [Error,setError] = React.useState(false)
 
 
   React.useEffect(()=>{
-      async function callAPI(){
-        var res = await axios.get('https://wegivmerchantapp.firebaseapp.com/exam/bi-member-day-2020-04-01.json') 
-         setData(res.data.data.list)
-         setSummary({Sum:res.data.data.summary,Total:res.data.data.total})
-         setTier(res.data.data.summarytier)
-         setCustomer(_.chain(Data).uniqBy('customername').value())
-      }
-      callAPI()
+          axios.get('https://wegivmerchantapp.firebaseapp.com/exam/bi-member-day-2020-04-01.json').then((res)=>{
+
+            setSummary({Sum:res.data.data.summary,Total:res.data.data.total})
+            setTier(res.data.data.summarytier)
+            setCustomer(_.chain(data.data.list).uniqBy('customername').value())
+          }).catch(error=>{
+            
+            setError(true)
+            setSummary({Sum:data.data.summary,Total:data.data.total})
+            setTier(data.data.summarytier)
+            setCustomer(_.chain(data.data.list).uniqBy('customername').value())
+
+          })
+
+
+
+
+   
   },[])
 
 
@@ -54,6 +65,12 @@ export default function App() {
 
   return (
     <div>
+      {Error?      <Alert variant="danger" onClose={() => setError(false)} dismissible>
+        <Alert.Heading>Error!</Alert.Heading>
+        <p>
+            Cross-Origin Request Blocked , Using Internal Data
+        </p>
+      </Alert>:null}
       <Container style={{marginTop:10}}>
 
         <Row>
